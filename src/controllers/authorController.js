@@ -4,7 +4,7 @@ const authorModel = require("../models/authorModel")
 const jwt = require("jsonwebtoken")
 const dotenv = require("dotenv")
 dotenv.config({ path: "../config.env" })
-const SECRET_KEY = process.env.SECRET_KEY
+const SECRETKEY = process.env.SECRET_KEY
 //const validator = require('validator')
 
 
@@ -15,6 +15,7 @@ const createAuthor = async function (req, res) {
         if (!fname || !lname || !title || !password || !cpassword || !email) {
             return res.status(400).send({ msg: "Bad Request please fill all the fields" })
         }
+
 
 
         if (!cpassword) { return res.status(400).send({ status: false, msg: "cpassword field must be required" }) }
@@ -54,7 +55,7 @@ const loginAuthor = async function (req, res) {
 
         if (!author) return resstatus(422).send({ status: false, msg: "Email or the password is not corerct" });
 
-        let token = jwt.sign({ authorId: author._id.toString(), authorName: author.fname, authorEmail: author.email }, "SECRET_KEY");
+        let token = jwt.sign({ authorId: author._id.toString(), authorName: author.fname, authorEmail: author.email }, "SECRETKEYISTHEIMPORTANTPARTOFTOKEN" );
 
         res.setHeader("x-auth-token", token);
         res.status(200).send({ status: true, data: token });
