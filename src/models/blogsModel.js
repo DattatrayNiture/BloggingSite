@@ -27,10 +27,8 @@ const blogsSchema = new mongoose.Schema({
         enum: ["technology", "entertainment", "life style", "food", "fashion"]
     },
     subcategory: {
-        type: [String],
-        required: true
-
-
+        type: [String]
+        
     },
     publishedAt: {
         type: String,

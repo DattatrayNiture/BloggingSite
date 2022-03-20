@@ -1,4 +1,4 @@
-const { count } = require("console")
+
 const BlogModel = require("../models/blogsModel")
 const authorModel = require("../models/authorModel")
 const { findByIdAndUpdate } = require("../models/authorModel")
@@ -42,12 +42,13 @@ const getData = async function (req, res) {
 
 
         if (!title && !category && !tags && !subcategory && authorId) {
-            let data = await BlogModel.find({ $or: [{ isDeleted: false, isPublished: true }, { isDeleted: false, authorId: authorId, isDeleted: false }] })
+            let data = await BlogModel.find({ $or: [{ isDeleted: false, isPublished: true }, { isDeleted: false, authorId: authorId }] })
 
             if (data.length <= 0) {
                 return res.status(404).send({ status: false, msg: "Data Not Found" })
             }
-            return res.status(200).send({ status: true, msg: data })
+
+            return res.status(200).send({ status: true,count:data.length, msg: data })
         }
 
 
@@ -70,6 +71,7 @@ const getData = async function (req, res) {
         if (data.length <= 0 && data1.length <= 0) {
             return res.status(404).send({ status: false, masg: "sorry we couldn't find releted data" })
         }
+        
         res.status(200).send({ status: true, msg: data, your_unpublished_data: data1 })
 
 

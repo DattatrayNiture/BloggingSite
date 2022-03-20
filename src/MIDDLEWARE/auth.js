@@ -2,9 +2,8 @@ const jwt = require("jsonwebtoken");
 const BlogModel = require('../models/blogsModel.js')
 const ObjectId = require('../objectIdValidation/isObjectValid')
 const dotenv = require("dotenv")
-
-dotenv.config({ path: "../config.env" })
-const SECRET_KEY = process.env.SECRET_KEY
+// dotenv.config({ path: "../config.env" })
+// const SECRET_KEY = process.env.SECRET_KEY
 
 
 const jwtauth1 = async function (req, res, next) {
@@ -14,8 +13,8 @@ const jwtauth1 = async function (req, res, next) {
     let token = req.headers["x-Auth-token"];
     if (!token) token = req.headers["x-auth-token"];
     if (!token) return res.status(401).send({ status: false, msg: "token must be present" });
-
-
+    console.log(token)
+   
     let decodedToken = jwt.verify(token, "SECRETKEYISTHEIMPORTANTPARTOFTOKEN");
     if (!decodedToken) { return res.status(401).send({ status: false, msg: "token is invalid" }) };
 
@@ -23,16 +22,18 @@ const jwtauth1 = async function (req, res, next) {
     let authorId = req.query.authorId
     if (!authorId) authorId = req.params.authorId
     if (!authorId) authorId = req.body.authorId
-
+    console.log(authorId)
     if (!authorId) { return res.status(400).send({ status: false, msg: "Bad request authorId is must" }) }
 
     if (!ObjectId.isValid(authorId)) { return res.status(422).send(`ERROR! This authorid: ${authorId} is invalid `) }
-
+    
     let authorLoggedIn = decodedToken.authorId
+    console.log(authorId)
+    console.log(authorLoggedIn)
     if (authorId != authorLoggedIn) return res.status(401).send({ status: false, msg: 'Author logged is not allowed to modify the requested authors data' })
 
     next()
-
+//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JJZCI6IjYyMzJkYTQ1MWViNjI3NzZkNDBlZjgxYyIsImF1dGhvck5hbWUiOiJQcmFzdW4iLCJhdXRob3JFbWFpbCI6InByYXN1bjM0NTZAZ21haWwuY29tIiwiaWF0IjoxNjQ3NTAwODY5fQ.62Dn_IO3fa6qIe-Ca2HD4x3XlnMQ2RQN4dgAhnNV_gk
 
 
   } catch (error) {
@@ -108,7 +109,7 @@ const jwtauth3 = async function (req, res, next) {
     let blogId = req.query.blogId
     if (!blogId) blogId = req.params.blogId
     if (!blogId) blogId = req.body.blogId
-    console.log(blogId)
+    
     if (blogId) {
 
       if (!ObjectId.isValid(blogId)) { return res.status(422).send({ status: false, msg: `ERROR! This blogId: ${blogId} is invalid ` }) }
@@ -119,8 +120,7 @@ const jwtauth3 = async function (req, res, next) {
       let authorId = blogObject[0].authorId
 
       let authorLoggedIn = decodedToken.authorId
-      console.log(authorId)
-      console.log(authorLoggedIn)
+      
       if (authorId != authorLoggedIn) return res.status(401).send({ status: false, msg: 'Author logged is not allowed to modify the requested authors data' })
       req.query.authorId = authorId;
       next()

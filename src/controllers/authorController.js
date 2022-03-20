@@ -53,7 +53,7 @@ const loginAuthor = async function (req, res) {
 
         let author = await authorModel.findOne({ email: email, password: password });
 
-        if (!author) return resstatus(422).send({ status: false, msg: "Email or the password is not corerct" });
+        if (!author) return res.status(422).send({ status: false, msg: "Email or the password is not corerct" });
 
         let token = jwt.sign({ authorId: author._id.toString(), authorName: author.fname, authorEmail: author.email }, "SECRETKEYISTHEIMPORTANTPARTOFTOKEN" );
 
