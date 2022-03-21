@@ -1,7 +1,6 @@
 
 const BlogModel = require("../models/blogsModel")
 const authorModel = require("../models/authorModel")
-const { findByIdAndUpdate } = require("../models/authorModel")
 const moment = require('moment')
 
 
@@ -41,7 +40,7 @@ const getData = async function (req, res) {
         let { title, category, tags, subcategory } = req.query;
 
 
-        if (!title && !category && !tags && !subcategory && authorId) {
+        if (!title && !category && tags.length <= 0 && subcategory.length <= 0 && authorId) {
             let data = await BlogModel.find({ $or: [{ isDeleted: false, isPublished: true }, { isDeleted: false, authorId: authorId }] })
 
             if (data.length <= 0) {
@@ -98,7 +97,7 @@ const updateData = async function (req, res) {
             //console.log(isPublished)
         }
         // console.log(tags, typeof (tags))
-        if (tags || subcategory) {
+        if (tags.length > 0 || subcategory.length > 0) {
             // console.log('hello')
             let blogObject = await BlogModel.findOne({ _id: blogId, isDeleted: false })
 
@@ -171,7 +170,7 @@ const deleteBlog = async function (req, res) {
 const deleteMultipleFields = async function (req, res) {
     try {
 
-        let data = req.query
+        
         if (!req.query) {
             return res.status(400).send({ status: false, msg: "bad request" })
         }
