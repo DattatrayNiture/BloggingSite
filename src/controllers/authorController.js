@@ -12,11 +12,16 @@ const createAuthor = async function (req, res) {
     try {
 
         let { fname, lname, title, password, cpassword, email } = req.body
-        if (!fname || !lname || !title || !password || !cpassword || !email) {
+        if (!fname || !lname || !title ) {
             return res.status(400).send({ msg: "Bad Request please fill all the fields" })
+        }
+        if (!email) {
+            return res.status(400).send({ msg: "Bad Request please fill email" })
         }
 
 
+        if (!password) { return res.status(400).send({ status: false, msg: "password field must be required" }) }
+        
 
         if (!cpassword) { return res.status(400).send({ status: false, msg: "cpassword field must be required" }) }
         if (password != cpassword) {  // checking password password is matchng or not
@@ -24,13 +29,13 @@ const createAuthor = async function (req, res) {
         }
 
         let userExist = await authorModel.findOne({ email: email })
-        if (userExist) { return res.status(422).send({ status: false, error: `ERROR! : ${email}this Email already exist` }) }
+        if (userExist) { return res.status(422).send({ status: false, error: `ERROR! : ${email} this Email already exist` }) }
 
 
         delete req.body["cpassword"] // we are deleting the cpassword because don't need to save in dataBase
 
         let savedData = await authorModel.create(req.body)
-        res.status(201).send({ status: true, data: savedData })
+        return res.status(201).send({ status: true, data: savedData })
 
 
     }
@@ -49,7 +54,8 @@ const loginAuthor = async function (req, res) {
 
         const { email, password } = req.body
 
-        if (!email || !password) { return res.send({ msg: ' Bad request' }) }
+        if (!email) { return res.send({ msg: ' Bad Request please fill email ' }) }
+        if (!password) { return res.send({ msg: ' Bad request please fill password field' }) }
 
         let author = await authorModel.findOne({ email: email, password: password });
 
@@ -58,9 +64,9 @@ const loginAuthor = async function (req, res) {
         let token = jwt.sign({ authorId: author._id.toString(), authorName: author.fname, authorEmail: author.email }, "SECRETKEYISTHEIMPORTANTPARTOFTOKEN" );
 
         res.setHeader("x-auth-token", token);
-        res.status(200).send({ status: true, data: token });
+        return res.status(200).send({ status: true, data: token });
     } catch (error) {
-        res.status(500).send(error.message)
+        return res.status(500).send(error.message)
     }
 
 };

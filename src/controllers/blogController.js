@@ -7,7 +7,7 @@ const moment = require('moment')
 
 const createBlog = async function (req, res) {
     try {
-        let data = req.body
+        
         let { title, body, authorId, category, subcategory, isPublished } = req.body
         if (!title || !body || !authorId || !category || !subcategory) { return res.status(400).send({ status: true, msg: "ERROR! : BAD REQUEST please fill all fields" }) }
         if (isPublished == true) {
@@ -21,7 +21,7 @@ const createBlog = async function (req, res) {
 
         if (!author) res.satus(404).send({ msg: "author with this id is not valid" })
 
-        let savedData = await BlogModel.create(data)
+        let savedData = await BlogModel.create(req.body)
         //console.log(savedData)
         res.status(201).send({ status: true, data: savedData })
 
@@ -93,12 +93,12 @@ const updateData = async function (req, res) {
         let { isPublished, tags, subcategory } = req.body;
         //console.log(isPublished)
         if (isPublished && isPublished == true) {
-            let Date = moment().format("YYYY-MM-DD[T]HH:mm:ss")
-            req.body.publishedAt = Date
+            let date = moment().format("YYYY-MM-DD[T]HH:mm:ss")
+            req.body.publishedAt = date
             //console.log(isPublished)
         }
         // console.log(tags, typeof (tags))
-        if (tags.length > 0 || subcategory.length > 0) {
+        if (tags || subcategory) {
             // console.log('hello')
             let blogObject = await BlogModel.findOne({ _id: blogId, isDeleted: false })
 
@@ -178,7 +178,7 @@ const deleteMultipleFields = async function (req, res) {
 
 
 
-        //logic if any one field with authorId matches with blog then delete
+        //logic if any one field with authorId matches with any category of blog  then delete
 
         let { blogId, authorId, category, tags, subcategory, isPublished } = req.query
         //let multipleDeletes1 = await BlogModel.find({$and: [{ isDeleted: false }, {authorId: authorId }, {$or: [ { blogId: blogId }, {category: category }, {tags: tags} , {subcategory: subcategory} , {isPublished: isPublished }] }]})
@@ -208,9 +208,9 @@ const deleteMultipleFields = async function (req, res) {
 
 
 
-        // // logic if all fields matches with blog then delete 
+        // // logic if all fields exactly matches with blog then delete 
 
-        // let multipleDeletes = await BlogModel.find(data)
+        // let multipleDeletes = await BlogModel.find(req.query)
         // console.log("deleted count", multipleDeletes.length)
         // if (multipleDeletes.length <= 0) {
         //     return res.status(404).send({ status: false, msg: "data not found" })

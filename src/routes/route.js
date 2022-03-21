@@ -14,7 +14,7 @@ router.post('/author', authorController.createAuthor)
 router.post('/login', authorController.loginAuthor)
 
 //blogs
-router.post('/blog', middleware.jwtauth1, BlogController.createBlog)
+router.post('/blog', middleware.jwtauth0, BlogController.createBlog)
 
 router.get('/getblogs', middleware.jwtauth1, BlogController.getData)
 router.put('/update/:blogId', middleware.jwtauth2, BlogController.updateData)
