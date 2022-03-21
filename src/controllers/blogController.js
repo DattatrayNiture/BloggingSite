@@ -39,8 +39,9 @@ const getData = async function (req, res) {
         let authorId = req.query.authorId;
         let { title, category, tags, subcategory } = req.query;
 
-
-        if (!title && !category && tags.length <= 0 && subcategory.length <= 0 && authorId) {
+           console.log(tags.length)
+            console.log(!tags)
+        if (!title && !category && !tags && !subcategory && authorId) {
             let data = await BlogModel.find({ $or: [{ isDeleted: false, isPublished: true }, { isDeleted: false, authorId: authorId }] })
 
             if (data.length <= 0) {
@@ -61,23 +62,23 @@ const getData = async function (req, res) {
 
 
         if (data.length > 0 && data1.length <= 0) {
-            res.status(200).send({ status: true, msg: data, your_unpublished_data: "You don't have unpublished data" })
+            return res.status(200).send({ status: true, msg: data, your_unpublished_data: "You don't have unpublished data" })
         }
         if (data.length <= 0 && data1.length > 0) {
-            res.status(200).send({ status: true, msg: "we don't find given filter data", your_unpublished_data: data1 })
+            return res.status(200).send({ status: true, msg: "we don't find given filter data", your_unpublished_data: data1 })
         }
 
         if (data.length <= 0 && data1.length <= 0) {
             return res.status(404).send({ status: false, masg: "sorry we couldn't find releted data" })
         }
         
-        res.status(200).send({ status: true, msg: data, your_unpublished_data: data1 })
+        return res.status(200).send({ status: true, msg: data, your_unpublished_data: data1 })
 
 
 
     } catch (err) {
         console.log("This is the error :", err.message)
-        res.status(500).send({ msg: "Error", error: err.message })
+        return res.status(500).send({ msg: "Error", error: err.message })
     }
 }
 
@@ -128,11 +129,11 @@ const updateData = async function (req, res) {
 
         if (!blogsCollection) { return res.status(404).send({ status: false, msg: "Data is Not updated" }) }
 
-        res.status(200).send({ status: true, msg: blogsCollection })
+        return res.status(200).send({ status: true, msg: blogsCollection })
 
     } catch (err) {
         console.log("This is the error :", err.message)
-        res.status(500).send({ msg: "Error", error: err.message })
+        return res.status(500).send({ msg: "Error", error: err.message })
     }
 }
 
@@ -150,13 +151,13 @@ const deleteBlog = async function (req, res) {
         let date = moment().format("YYYY-MM-DD[T]HH:mm:ss")
 
         const datas = await BlogModel.findByIdAndUpdate({ _id: blogId }, { isDeleted: true, deletedAt: date }, { new: true })
-        res.status(200).send()
+        return res.status(200).send()
 
 
     }
     catch (error) {
         console.log(error)
-        res.send({ msg: error.message })
+        return res.send({ msg: error.message })
     }
 }
 
@@ -239,7 +240,7 @@ const deleteMultipleFields = async function (req, res) {
 
     } catch (err) {
         console.log("This is the error :", err.message)
-        res.status(500).send({ msg: "Error", error: err.message })
+        return res.status(500).send({ msg: "Error", error: err.message })
     }
 }
 
